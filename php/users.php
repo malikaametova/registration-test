@@ -1,7 +1,5 @@
 <?php
-include('db.php'); // Подключаем базу данных
-
-// Запрос на получение всех пользователей
+include('db.php'); 
 $sql = "SELECT * FROM users";
 $result = $conn->query($sql);
 

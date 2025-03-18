@@ -1,17 +1,24 @@
 <?php
-include('db.php'); // Подключаем базу данных
+include('db.php');
 
-// Проверка, передан ли ID пользователя
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
 
-    // Удаляем пользователя по ID
-    $sql = "DELETE FROM users WHERE id = '$id'";
+    // Validate the ID to prevent SQL injection
+    if (!is_numeric($id)) {
+        echo "Недопустимый ID.";
+        exit;
+    }
 
-    if ($db->query($sql) === TRUE) {
-        echo "Пользователь успешно удалён!";
+    $sql = "DELETE FROM users WHERE id = ?";
+    $stmt = $db->prepare($sql);
+    $stmt->bind_param("i", $id);
+
+    if ($stmt->execute()) {
+        header("Location: list_users.php");
+        exit;
     } else {
-        echo "Ошибка: " . $db->error;
+        echo "Ошибка удаления: " . $stmt->error;
     }
 } else {
     echo "ID не передан!";
